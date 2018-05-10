@@ -38,12 +38,13 @@ def theFunction(start, end):
     #initialize match
     match = {}
     winRate = {}
+    totalMatches = {}
     for stre in range(0, 6):
         for agil in range (0, 6 - stre):
             intel = 5 - stre - agil
             comb = str(stre) + str(agil) + str(intel)
             if (comb) not in match:
-                match[comb] = [0, 0, 0]
+                match[comb] = [0, 0]
                 winRate[comb] = 0
                 
     for i in range(start, end, 10):
@@ -69,20 +70,23 @@ def theFunction(start, end):
         combLost = str(lost[0]) + str(lost[1]) + str(lost[2])
         match[combWin][0] = match[combWin][0] + 1
         match[combLost][1] = match[combLost][1] + 1
-        
+    
     for stre in range(0, 6):
         for agil in range (0, 6 - stre):
             intel = 5 - stre - agil
             comb = str(stre) + str(agil) + str(intel)
             if (comb) in match:
-                match[comb][2] = match[comb][0] + match[comb][1]
-                if (match[comb][2] != 0):
-                    winRate[comb] = '{0:.4g}'.format(match[comb][0] / match[comb][2])
+                totalMatches[comb] = match[comb][0] + match[comb][1]
+                if (totalMatches[comb] != 0):
+                    winRate[comb] = '{0:.4g}'.format(match[comb][0] / totalMatches[comb])
                 else:
                     winRate[comb] = 0
-    print(match)
-    print(winRate)
-    return match, winRate
+                    
+    totalMatchesSorted = sorted(totalMatches, key = totalMatches.get, reverse=True)
+    top10 = {}
+    for i in range(10):
+        top10[totalMatchesSorted[i]] = winRate[totalMatchesSorted[i]]
+    return match, winRate, top10
 
 
 
@@ -96,8 +100,6 @@ def graph(match, winRate):
     for i in range(len(sortedWR) - 5, len(sortedWR)):
         y.append(sortedWR[i])
         x.append(float(winRate[sortedWR[i]]) * 100)
-    
-    print(y)
     figure()
     red = "#f6546a"
     blue = "#034e94"
@@ -109,6 +111,7 @@ def graph(match, winRate):
     xlabel("Winrate (%)")
     ylabel("Team combination (S A I)")
     addValue(graph)
+    legend((graph[0], graph[5]), ('Top 5', 'Bottom 5'))
     show()
     
 def graphAll(match, winRate):    
@@ -118,27 +121,26 @@ def graphAll(match, winRate):
     for i in range(len(sortedWR)):
         y.append(sortedWR[i])
         x.append(float(winRate[sortedWR[i]]) * 100)
-    
-    print(y)
     figure()
     red = "#f6546a"
-    graph = barh(range(len(x)), x, color = "red")
+    blue = "#034e94"
+    graph = barh(range(len(x)), x, color = blue)
     xlim(20,80)
     yticks(range(len(y)), y)
     gca().invert_yaxis()
     axvline(x=50, color="red")
     xlabel("Winrate (%)")
     ylabel("Team combination (S A I)")
+    addValue(graph)
     show()
     
-combinations = ['320', '140', '230', '410', '032', '113', '104', '014', '005', '050']
+combinations = ['032', '311', '221', '131', '122', '023', '212', '302', '203', '113']
 def graphBefore7(match,winRate): 
     x = []
     y = combinations
     for i in range(10):
         x.append(float(winRate[y[i]]) * 100)
-    
-    
+        
     figure()
     red = "#f6546a"
     blue = "#034e94"
@@ -150,27 +152,27 @@ def graphBefore7(match,winRate):
     xlabel("Winrate (%)")
     ylabel("Team combination (S A I)")
     legend((graph[0], graph[5]), ('Top 5', 'Bottom 5'))
+    addValue(graph)
     show()
     
 def addValue(graph):
     for rect in graph:
         width = rect.get_width()
-        print(width)
         text(1.01 * width, rect.get_y() + rect.get_height()/2,
                 '%.2f' % float(width))
         
-    legend((graph[0], graph[5]), ('Top 5', 'Bottom 5'))
     
 #419740 is the number of games before 7.0
-matchAll, winAll = theFunction(0, len(data))
+matchAll, winAll, top10All = theFunction(0, len(data))
 graph(matchAll, winAll)
 graphAll(matchAll, winAll)
+graphAll(matchAll, top10All)
 
-matchb47, winb47 = theFunction(len(data) - 419740, len(data))
-graphBefore7(matchb47, winb47)
-
-matchaf7, winaf7 = theFunction(0, len(data) - 419740)
-graphBefore7(matchaf7, winaf7)
+#matchb47, winb47, top10b47 = theFunction(len(data) - 419740, len(data))
+#graphBefore7(matchb47, top10b47)
+#
+#matchaf7, winaf7, top10af7 = theFunction(0, len(data) - 419740)
+#graphBefore7(matchaf7, top10af7)
 
 
 #print(winRate)
