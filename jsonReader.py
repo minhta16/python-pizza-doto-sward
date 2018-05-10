@@ -81,7 +81,6 @@ def theFunction(start, end):
                     winRate[comb] = '{0:.4g}'.format(match[comb][0] / totalMatches[comb])
                 else:
                     winRate[comb] = 0
-                    
     totalMatchesSorted = sorted(totalMatches, key = totalMatches.get, reverse=True)
     top10 = {}
     for i in range(10):
@@ -161,7 +160,51 @@ def addValue(graph):
         text(1.01 * width, rect.get_y() + rect.get_height()/2,
                 '%.2f' % float(width))
         
-    
+
+def compare(start, end, string):
+    match = {}
+    winRate = {}
+    for i in range(start, end, 10):
+        win = [0, 0, 0]
+        lost = [0, 0, 0]
+        check = False
+        for j in range(0, 10):
+            if data[i + j]["win"] == True:
+                if data[i + j]["hero_id"] in stre_heroes:
+                    win[0] = win[0] + 1
+                if data[i + j]["hero_id"] in agil_heroes:
+                    win[1] = win[1] + 1
+                if data[i + j]["hero_id"] in intel_heroes:
+                    win[2] = win[2] + 1
+            else:
+                if data[i + j]["hero_id"] in stre_heroes:
+                    lost[0] = lost[0] + 1
+                if data[i + j]["hero_id"] in agil_heroes:
+                    lost[1] = lost[1] + 1
+                if data[i + j]["hero_id"] in intel_heroes:
+                    lost[2] = lost[2] + 1  
+        combWin = str(win[0]) + str(win[1]) + str(win[2])
+        combLost = str(lost[0]) + str(lost[1]) + str(lost[2])
+        if(combWin == string or combLost == string):
+            check = True
+        if(check):
+            if(combWin == combLost):
+                continue
+            if(combWin == string):
+                if(combLost in match):
+                    match[combLost][1] = match[combLost][1] + 1
+                else:
+                    match[combLost] = [0,1]
+            else:
+                if(combWin in match):
+                    match[combWin][0] = match[combWin][0] + 1
+                else:
+                    match[combWin] = [1,0]      
+    keys = list(match.keys())  
+    for i in range(len(keys)):
+        key = keys[i]
+        winRate[key] = '{0:.4g}'.format(match[key][1]/(match[key][0]+match[key][1]))
+    return match, winRate
 #419740 is the number of games before 7.0
 matchAll, winAll, top10All = theFunction(0, len(data))
 graph(matchAll, winAll)
@@ -174,7 +217,8 @@ graphAll(matchAll, top10All)
 #matchaf7, winaf7, top10af7 = theFunction(0, len(data) - 419740)
 #graphBefore7(matchaf7, top10af7)
 
-
+print(compare(0, len(data), '113'))
+#113, 122, 212
 #print(winRate)
 #print(sorted(winRate, key = winRate.get, reverse=True))
            
