@@ -32,15 +32,6 @@ intel_heroes = [68, 3, 65, 66, 5, 55, 119, 50, 43, 87, 58, 33, 74, 64, 90, 52,
 with open('realData.json') as f:
     data = json.load(f)
 
-def autolabel(rects):
-    """
-    Attach a text label above each bar displaying its height
-    """
-    for rect in rects:
-        height = rect.get_height()
-        ax.text(rect.get_x() + rect.get_width()/2., 1.05*height,
-                '%d' % int(height),
-                ha='center', va='bottom')
         
 def theFunction(start, end):    
     #initialize match
@@ -85,7 +76,7 @@ def theFunction(start, end):
             if (comb) in match:
                 match[comb][2] = match[comb][0] + match[comb][1]
                 if (match[comb][2] != 0):
-                    winRate[comb] = '{0:.3g}'.format(match[comb][0] / match[comb][2])
+                    winRate[comb] = '{0:.4g}'.format(match[comb][0] / match[comb][2])
                 else:
                     winRate[comb] = 0
     
@@ -115,7 +106,7 @@ def graph(match, winRate):
     axvline(x=50, color="red")
     xlabel("Winrate (%)")
     ylabel("Team combination (S A I)")
-    legend((graph[0], graph[5]), ('Top 5', 'Bottom 5'))
+    addValue(graph)
     show()
     
     
@@ -140,6 +131,14 @@ def graphBefore7(match,winRate):
     legend((graph[0], graph[5]), ('Top 5', 'Bottom 5'))
     show()
     
+def addValue(graph):
+    for rect in graph:
+        width = rect.get_width()
+        print(width)
+        text(1.01 * width, rect.get_y() + rect.get_height()/2,
+                '%.2f' % float(width))
+        
+    legend((graph[0], graph[5]), ('Top 5', 'Bottom 5'))
     
 #419740 is the number of games before 7.0
 matchAll, winAll = theFunction(0, len(data))
@@ -151,7 +150,6 @@ graphBefore7(matchb47, winb47)
 matchaf7, winaf7 = theFunction(0, len(data) - 419740)
 graphBefore7(matchaf7, winaf7)
 
-autolabel
 
 #print(winRate)
 #print(sorted(winRate, key = winRate.get, reverse=True))
