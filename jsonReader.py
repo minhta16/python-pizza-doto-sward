@@ -217,8 +217,13 @@ graphAll(matchAll, top10All)
 #matchaf7, winaf7, top10af7 = theFunction(0, len(data) - 419740)
 #graphBefore7(matchaf7, top10af7)
 
-print(compare(0, len(data), '113'))
 #113, 122, 212
+match113, win113 = compare(0, len(data),'113')
+graphAll(match113, win113)
+match122, win122 = compare(0, len(data),'122')
+graphAll(match122, win122)
+match212, win212 = compare(0, len(data),'212')
+graphAll(match212, win212)
 #print(winRate)
 #print(sorted(winRate, key = winRate.get, reverse=True))
            
