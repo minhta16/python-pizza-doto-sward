@@ -151,6 +151,7 @@ graphBefore7(matchb47, winb47)
 matchaf7, winaf7 = theFunction(0, len(data) - 419740)
 graphBefore7(matchaf7, winaf7)
 
+autolabel
 
 #print(winRate)
 #print(sorted(winRate, key = winRate.get, reverse=True))
