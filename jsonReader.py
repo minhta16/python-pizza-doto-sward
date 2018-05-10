@@ -190,22 +190,22 @@ def compare(start, end, string):
 #419740 is the number of games before 7.0
 matchAll, winAll, top10All = theFunction(0, len(data))
 graph(matchAll, winAll)
-graphAll(matchAll, winAll, 20, 80)
-graphAll(matchAll, top10All, 20, 80)
+graphAll(matchAll, winAll, 30, 70)
+graphAll(matchAll, top10All, 30, 70)
 
 matchb47, winb47, top10b47 = theFunction(len(data) - 419740, len(data))
-graphAll(matchb47, top10b47, 20, 80)
+graphAll(matchb47, top10b47, 30, 70)
 
 matchaf7, winaf7, top10af7 = theFunction(0, len(data) - 419740)
-graphAll(matchaf7, top10af7, 20, 80)
+graphAll(matchaf7, top10af7, 30, 70)
 
 #113, 122, 212
 match113, win113 = compare(0, len(data),'113')
-graphAll(match113, win113)
+graphAll(match113, win113, 30, 100)
 match122, win122 = compare(0, len(data),'122')
-graphAll(match122, win122)
+graphAll(match122, win122, 30, 100)
 match212, win212 = compare(0, len(data),'212')
-graphAll(match212, win212)
+graphAll(match212, win212, 30, 100)
 #print(winRate)
 #print(sorted(winRate, key = winRate.get, reverse=True))
            
