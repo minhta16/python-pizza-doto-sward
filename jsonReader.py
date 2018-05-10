@@ -10,7 +10,7 @@ from pprint import pprint
 from pylab import *
 import matplotlib.pyplot as plt
     
-range_heroes = [3, 5, 6, 9, 11, 10, 13, 15, 17, 20, 21, 22, 25, 31, 26, 27, 30, 
+ranged_heroes = [3, 5, 6, 9, 11, 10, 13, 15, 17, 20, 21, 22, 25, 31, 26, 27, 30, 
                33, 34, 35, 36, 37, 39, 40, 43, 45, 46, 47, 48, 50, 52, 53, 56, 58,
                59, 63, 64, 65, 66, 68, 72, 74, 75, 76, 79, 86, 87, 90, 91, 92, 
                94, 101, 110, 105, 111, 112, 113, 119]
@@ -33,7 +33,7 @@ intel_heroes = [68, 3, 65, 66, 5, 55, 119, 50, 43, 87, 58, 33, 74, 64, 90, 52,
 with open('realData.json') as f:
     data = json.load(f)
 
-        
+#for Strength-Agility-Intelligence Filter
 def theFunction(start, end):    
     #initialize match
     match = {}
@@ -87,6 +87,56 @@ def theFunction(start, end):
         top10[totalMatchesSorted[i]] = winRate[totalMatchesSorted[i]]
     return match, winRate, top10, totalMatchesSorted
 
+#for Melee-Ranged Filter
+def theFunction2(start, end):
+    match = {}
+    winRate = {}
+    totalMatches = {}
+    for melee in range(0, 6):
+        ranged = 5 - melee
+        comb = str(melee) + str(ranged)
+        if (comb) not in match:
+            match[comb] = [0, 0]
+            winRate[comb] = 0
+                
+    for i in range(start, end, 10):
+        win = [0, 0]
+        lost = [0, 0]
+        
+        for j in range(0, 10):
+            if data[i + j]["win"] == True:
+                if data[i + j]["hero_id"] in melee_heroes:
+                    win[0] = win[0] + 1
+                if data[i + j]["hero_id"] in ranged_heroes or data[i + j]["hero_id"] in hybrid_heroes:
+                    win[1] = win[1] + 1
+            else:
+                if data[i + j]["hero_id"] in melee_heroes:
+                    lost[0] = lost[0] + 1
+                if data[i + j]["hero_id"] in ranged_heroes or data[i + j]["hero_id"] in hybrid_heroes:
+                    lost[1] = lost[1] + 1
+        combWin = str(win[0]) + str(win[1])
+        combLost = str(lost[0]) + str(lost[1])
+        match[combWin][0] = match[combWin][0] + 1
+        match[combLost][1] = match[combLost][1] + 1
+    
+    for melee in range(0, 6):
+        ranged = 5 - melee
+        comb = str(melee) + str(ranged)
+        if (comb) in match:
+            totalMatches[comb] = match[comb][0] + match[comb][1]
+            if (totalMatches[comb] != 0):
+                winRate[comb] = '{0:.4g}'.format(match[comb][0] / totalMatches[comb])
+            else:
+                winRate[comb] = 0
+    print(match)
+    print(winRate)
+    return match, winRate
+
+red = "#f6546a"
+blue = "#4B92DB"
+
+barColor = red
+verLineColor = "black"
 
 def graph(match, winRate):    
     sortedWR = sorted(winRate, key = winRate.get, reverse=True)
@@ -248,9 +298,8 @@ match212, win212, total212 = compare(0, len(data),'212')
 #graphAll(match221, total221, 0, 100, False)
 #graphAll(match122, total122, 0, 100, False)
 #graphAll(match212, total212, 0, 100, False)
-
 #print(winRate)
 #print(sorted(winRate, key = winRate.get, reverse=True))
-           
+theFunction2(0, len(data))
 
         
