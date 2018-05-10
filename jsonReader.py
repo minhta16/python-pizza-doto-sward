@@ -8,6 +8,7 @@ Created on Mon May  7 21:33:03 2018
 import json
 from pprint import pprint
 from pylab import *
+import matplotlib.pyplot as plt
     
 range_heroes = [3, 5, 6, 9, 11, 10, 13, 15, 17, 20, 21, 22, 25, 31, 26, 27, 30, 
                33, 34, 35, 36, 37, 39, 40, 43, 45, 46, 47, 48, 50, 52, 53, 56, 58,
@@ -79,7 +80,8 @@ def theFunction(start, end):
                     winRate[comb] = '{0:.4g}'.format(match[comb][0] / match[comb][2])
                 else:
                     winRate[comb] = 0
-    
+    print(match)
+    print(winRate)
     return match, winRate
 
 
@@ -109,6 +111,25 @@ def graph(match, winRate):
     addValue(graph)
     show()
     
+def graphAll(match, winRate):    
+    sortedWR = sorted(winRate, key = winRate.get, reverse=True)
+    x = []
+    y = []
+    for i in range(len(sortedWR)):
+        y.append(sortedWR[i])
+        x.append(float(winRate[sortedWR[i]]) * 100)
+    
+    print(y)
+    figure()
+    red = "#f6546a"
+    graph = barh(range(len(x)), x, color = "red")
+    xlim(20,80)
+    yticks(range(len(y)), y)
+    gca().invert_yaxis()
+    axvline(x=50, color="red")
+    xlabel("Winrate (%)")
+    ylabel("Team combination (S A I)")
+    show()
     
 combinations = ['320', '140', '230', '410', '032', '113', '104', '014', '005', '050']
 def graphBefore7(match,winRate): 
@@ -143,6 +164,7 @@ def addValue(graph):
 #419740 is the number of games before 7.0
 matchAll, winAll = theFunction(0, len(data))
 graph(matchAll, winAll)
+graphAll(matchAll, winAll)
 
 matchb47, winb47 = theFunction(len(data) - 419740, len(data))
 graphBefore7(matchb47, winb47)
@@ -154,5 +176,5 @@ graphBefore7(matchaf7, winaf7)
 #print(winRate)
 #print(sorted(winRate, key = winRate.get, reverse=True))
            
-    
+
         
