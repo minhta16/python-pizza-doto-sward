@@ -200,8 +200,12 @@ matchaf7, winaf7, top10af7 = theFunction(0, len(data) - 419740)
 graphAll(matchaf7, top10af7, 30, 70)
 
 #113, 122, 212
+match311, win311 = compare(0, len(data),'311')
+graphAll(match311, win311, 30, 100)
 match113, win113 = compare(0, len(data),'113')
 graphAll(match113, win113, 30, 100)
+match221, win221 = compare(0, len(data),'221')
+graphAll(match221, win221, 30, 100)
 match122, win122 = compare(0, len(data),'122')
 graphAll(match122, win122, 30, 100)
 match212, win212 = compare(0, len(data),'212')
