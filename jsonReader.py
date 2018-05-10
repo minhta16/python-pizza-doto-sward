@@ -85,15 +85,8 @@ def theFunction(start, end):
     top10 = {}
     for i in range(10):
         top10[totalMatchesSorted[i]] = winRate[totalMatchesSorted[i]]
-    return match, winRate, top10
+    return match, winRate, top10, totalMatchesSorted
 
-
-
-red = "#f6546a"
-blue = "#4B92DB"
-
-barColor = red
-verLineColor = "black"
 
 def graph(match, winRate):    
     sortedWR = sorted(winRate, key = winRate.get, reverse=True)
@@ -117,8 +110,11 @@ def graph(match, winRate):
     legend((graph[0], graph[5]), ('Top 5', 'Bottom 5'))
     show()
     
-def graphAll(match, winRate, xleftlim, xrightlim):    
-    sortedWR = sorted(winRate, key = winRate.get, reverse=True)
+def graphAll(match, winRate, xleftlim, xrightlim, sort):
+    if sort == True:
+        sortedWR = sorted(winRate, key = winRate.get, reverse=True)
+    else:    
+        sortedWR = list(winRate.keys())
     x = []
     y = []
     for i in range(len(sortedWR)):
@@ -135,10 +131,9 @@ def graphAll(match, winRate, xleftlim, xrightlim):
     addValue(graph)
     show()
     
-def graphAllByCombination(match, winRate, xleftlim, xrightlim, comb):    
-    sortedWR = sorted(winRate, key = winRate.get, reverse=True)
+def graphAllByCombination(match, winRate, xleftlim, xrightlim, comb):
     x = []
-    for i in range(len(sortedWR)):
+    for i in range(len(list(winRate.keys()))):
         x.append(float(winRate[comb[i]]) * 100)
     figure()
     graph = barh(range(len(x)), x, color = barColor)
@@ -161,6 +156,7 @@ def addValue(graph):
 def compare(start, end, string):
     match = {}
     winRate = {}
+    totalMatches = {}
     for i in range(start, end, 10):
         win = [0, 0, 0]
         lost = [0, 0, 0]
@@ -197,35 +193,62 @@ def compare(start, end, string):
                     match[combWin][0] = match[combWin][0] + 1
                 else:
                     match[combWin] = [1,0]      
+ 
     keys = list(match.keys())  
     for i in range(len(keys)):
         key = keys[i]
-        winRate[key] = '{0:.4g}'.format(match[key][1]/(match[key][0]+match[key][1]))
-    return match, winRate
-#419740 is the number of games before 7.0
-matchAll, winAll, top10All = theFunction(0, len(data))
-graph(matchAll, winAll)
-graphAll(matchAll, winAll, 30, 70)
-graphAll(matchAll, top10All, 30, 70)
+        totalMatches[key] = match[key][0] + match[key][1]
+        winRate[key] = '{0:.4g}'.format(match[key][1]/totalMatches[key])
+    
+    totalMatchesSorted = sorted(totalMatches, key = totalMatches.get, reverse=True)
+    
+    
+    winRateSortByTotal = {}
+    for i in range(len(totalMatchesSorted)):
+        key = totalMatchesSorted[i]
+        winRateSortByTotal[key] = '{0:.4g}'.format(match[key][1]/totalMatches[key])
+    return match, winRate, winRateSortByTotal
 
-comb = ['032', '311', '221', '131', '122', '023', '212', '302', '203', '113']
-matchb47, winb47, top10b47 = theFunction(len(data) - 419740, len(data))
+red = "#f6546a"
+blue = "#4B92DB"
+
+barColor = blue
+verLineColor = "black"
+#419740 is the number of games before 7.0
+matchAll, winAll, top10All, matchNumSortAll = theFunction(0, len(data))
+graph(matchAll, winAll)
+graphAll(matchAll, winAll, 30, 70, True)
+graphAll(matchAll, top10All, 30, 70, False)
+
+comb = ['212', '122', '113', '221', '311', '203', '023', '302', '131', '032']
+matchb47, winb47, top10b47, matchNumSortb47 = theFunction(len(data) - 419740, len(data))
 graphAllByCombination(matchb47, top10b47, 30, 70, comb)
 
-matchaf7, winaf7, top10af7 = theFunction(0, len(data) - 419740)
+matchaf7, winaf7, top10af7, matchNumSortaf7 = theFunction(0, len(data) - 419740)
 graphAllByCombination(matchaf7, top10af7, 30, 70, comb)
-
+#
 #113, 122, 212
-match311, win311 = compare(0, len(data),'311')
-graphAll(match311, win311, 0, 100)
-match113, win113 = compare(0, len(data),'113')
-graphAll(match113, win113, 0, 100)
-match221, win221 = compare(0, len(data),'221')
-graphAll(match221, win221, 0, 100)
-match122, win122 = compare(0, len(data),'122')
-graphAll(match122, win122, 0, 100)
-match212, win212 = compare(0, len(data),'212')
-graphAll(match212, win212, 0, 100)
+match311, win311, total311 = compare(0, len(data),'311')
+match113, win113, total113 = compare(0, len(data),'113')
+match221, win221, total221 = compare(0, len(data),'221')
+match122, win122, total122 = compare(0, len(data),'122')
+match212, win212, total212 = compare(0, len(data),'212')
+
+##sort by winrate
+#graphAll(match311, win311, 0, 100, True)
+#graphAll(match113, win113, 0, 100, True)
+#graphAll(match221, win221, 0, 100, True)
+#graphAll(match122, win122, 0, 100, True)
+#graphAll(match212, win212, 0, 100, True)
+
+
+##graph by popularity
+#graphAll(match311, total311, 0, 100, False)
+#graphAll(match113, total113, 0, 100, False)
+#graphAll(match221, total221, 0, 100, False)
+#graphAll(match122, total122, 0, 100, False)
+#graphAll(match212, total212, 0, 100, False)
+
 #print(winRate)
 #print(sorted(winRate, key = winRate.get, reverse=True))
            
