@@ -89,6 +89,12 @@ def theFunction(start, end):
 
 
 
+red = "#f6546a"
+blue = "#4B92DB"
+
+barColor = red
+verLineColor = "black"
+
 def graph(match, winRate):    
     sortedWR = sorted(winRate, key = winRate.get, reverse=True)
     x = []
@@ -100,20 +106,18 @@ def graph(match, winRate):
         y.append(sortedWR[i])
         x.append(float(winRate[sortedWR[i]]) * 100)
     figure()
-    red = "#f6546a"
-    blue = "#034e94"
     graph = barh(range(len(x)), x, color = [red,red,red,red,red, blue,blue,blue,blue,blue])
     xlim(20,80)
     yticks(range(len(y)), y)
     gca().invert_yaxis()
-    axvline(x=50, color="red")
+    axvline(x=50, color=verLineColor)
     xlabel("Winrate (%)")
     ylabel("Team combination (S A I)")
     addValue(graph)
     legend((graph[0], graph[5]), ('Top 5', 'Bottom 5'))
     show()
     
-def graphAll(match, winRate):    
+def graphAll(match, winRate, xleftlim, xrightlim):    
     sortedWR = sorted(winRate, key = winRate.get, reverse=True)
     x = []
     y = []
@@ -121,38 +125,16 @@ def graphAll(match, winRate):
         y.append(sortedWR[i])
         x.append(float(winRate[sortedWR[i]]) * 100)
     figure()
-    red = "#f6546a"
-    blue = "#034e94"
-    graph = barh(range(len(x)), x, color = blue)
-    xlim(20,80)
+    graph = barh(range(len(x)), x, color = barColor)
+    xlim(xleftlim, xrightlim)
     yticks(range(len(y)), y)
     gca().invert_yaxis()
-    axvline(x=50, color="red")
+    axvline(x=50, color=verLineColor)
     xlabel("Winrate (%)")
     ylabel("Team combination (S A I)")
     addValue(graph)
     show()
     
-combinations = ['032', '311', '221', '131', '122', '023', '212', '302', '203', '113']
-def graphBefore7(match,winRate): 
-    x = []
-    y = combinations
-    for i in range(10):
-        x.append(float(winRate[y[i]]) * 100)
-        
-    figure()
-    red = "#f6546a"
-    blue = "#034e94"
-    graph = barh(range(len(x)), x, color = [red,red,red,red,red, blue,blue,blue,blue,blue])
-    xlim(20,80)
-    yticks(range(len(y)), y)
-    gca().invert_yaxis()
-    axvline(x=50, color="red")
-    xlabel("Winrate (%)")
-    ylabel("Team combination (S A I)")
-    legend((graph[0], graph[5]), ('Top 5', 'Bottom 5'))
-    addValue(graph)
-    show()
     
 def addValue(graph):
     for rect in graph:
@@ -208,16 +190,15 @@ def compare(start, end, string):
 #419740 is the number of games before 7.0
 matchAll, winAll, top10All = theFunction(0, len(data))
 graph(matchAll, winAll)
-graphAll(matchAll, winAll)
-graphAll(matchAll, top10All)
+graphAll(matchAll, winAll, 20, 80)
+graphAll(matchAll, top10All, 20, 80)
 
-#matchb47, winb47, top10b47 = theFunction(len(data) - 419740, len(data))
-#graphBefore7(matchb47, top10b47)
-#
-#matchaf7, winaf7, top10af7 = theFunction(0, len(data) - 419740)
-#graphBefore7(matchaf7, top10af7)
+matchb47, winb47, top10b47 = theFunction(len(data) - 419740, len(data))
+graphAll(matchb47, top10b47, 20, 80)
 
-print(compare(0, len(data), '113'))
+matchaf7, winaf7, top10af7 = theFunction(0, len(data) - 419740)
+graphAll(matchaf7, top10af7, 20, 80)
+
 #113, 122, 212
 #print(winRate)
 #print(sorted(winRate, key = winRate.get, reverse=True))
