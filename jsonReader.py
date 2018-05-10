@@ -2,7 +2,7 @@
 """
 Created on Mon May  7 21:33:03 2018
 
-@author: Minh Ta
+@author: Minh Ta & Son Nguyen
 """
 
 import json
