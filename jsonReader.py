@@ -135,6 +135,21 @@ def graphAll(match, winRate, xleftlim, xrightlim):
     addValue(graph)
     show()
     
+def graphAllByCombination(match, winRate, xleftlim, xrightlim, comb):    
+    sortedWR = sorted(winRate, key = winRate.get, reverse=True)
+    x = []
+    for i in range(len(sortedWR)):
+        x.append(float(winRate[comb[i]]) * 100)
+    figure()
+    graph = barh(range(len(x)), x, color = barColor)
+    xlim(xleftlim, xrightlim)
+    yticks(range(len(comb)), comb)
+    gca().invert_yaxis()
+    axvline(x=50, color=verLineColor)
+    xlabel("Winrate (%)")
+    ylabel("Team combination (S A I)")
+    addValue(graph)
+    show()
     
 def addValue(graph):
     for rect in graph:
@@ -193,11 +208,12 @@ graph(matchAll, winAll)
 graphAll(matchAll, winAll, 30, 70)
 graphAll(matchAll, top10All, 30, 70)
 
+comb = ['032', '311', '221', '131', '122', '023', '212', '302', '203', '113']
 matchb47, winb47, top10b47 = theFunction(len(data) - 419740, len(data))
-graphAll(matchb47, top10b47, 30, 70)
+graphAllByCombination(matchb47, top10b47, 30, 70, comb)
 
 matchaf7, winaf7, top10af7 = theFunction(0, len(data) - 419740)
-graphAll(matchaf7, top10af7, 30, 70)
+graphAllByCombination(matchaf7, top10af7, 30, 70, comb)
 
 #113, 122, 212
 match311, win311 = compare(0, len(data),'311')
