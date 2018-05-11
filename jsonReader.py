@@ -128,15 +128,7 @@ def theFunction2(start, end):
                 winRate[comb] = '{0:.4g}'.format(match[comb][0] / totalMatches[comb])
             else:
                 winRate[comb] = 0
-    print(match)
-    print(winRate)
     return match, winRate
-
-red = "#f6546a"
-blue = "#4B92DB"
-
-barColor = red
-verLineColor = "black"
 
 def graph(match, winRate):    
     sortedWR = sorted(winRate, key = winRate.get, reverse=True)
@@ -259,6 +251,57 @@ def compare(start, end, string):
         winRateSortByTotal[key] = '{0:.4g}'.format(match[key][1]/totalMatches[key])
     return match, winRate, winRateSortByTotal
 
+def winRateOverTime(start, end, interval, string):
+    winRate = []
+    for i in range(0, int ((end-start)/(interval*10))):
+        winLost = [0, 0]
+        for j in range(start + 10 * interval * i, start + 10 * interval * (i + 1), 10):
+            win = [0, 0, 0]
+            lost = [0, 0, 0]
+            check = False
+            for k in range(0, 10):
+                if data[k + j]["win"] == True:
+                    if data[k + j]["hero_id"] in stre_heroes:
+                        win[0] = win[0] + 1
+                    if data[k + j]["hero_id"] in agil_heroes:
+                        win[1] = win[1] + 1
+                    if data[k + j]["hero_id"] in intel_heroes:
+                        win[2] = win[2] + 1
+                else:
+                    if data[k + j]["hero_id"] in stre_heroes:
+                        lost[0] = lost[0] + 1
+                    if data[k + j]["hero_id"] in agil_heroes:
+                        lost[1] = lost[1] + 1
+                    if data[k + j]["hero_id"] in intel_heroes:
+                        lost[2] = lost[2] + 1  
+            combWin = str(win[0]) + str(win[1]) + str(win[2])
+            combLost = str(lost[0]) + str(lost[1]) + str(lost[2])
+            if(combWin == string or combLost == string):
+                check = True
+            if(check):
+                if(combWin == combLost):
+                    continue
+                if(combWin == string):
+                    winLost[0] = winLost[0] + 1
+                else:
+                    winLost[1] = winLost[1] + 1
+        if winLost[0] + winLost[1] == 0:
+            winRate.append(0)
+        else:
+            winRate.append(100 * winLost[0] / (winLost[0] + winLost[1]))
+    return winRate
+
+def graphWROverTime(start, end, interval, wrot):
+    figure()
+    plot(range(len(wrot)), wrot, color = barColor)
+    ylim(30, 70)
+    axhline(y=50, color=verLineColor)
+    xticks(range(int((end-start)/interval / 10)), range(start, end, interval * 10))
+    gca().locator_params(nbins=6, axis='x')
+    xlabel("Matches")
+    ylabel("Winrate (%)")
+    show()
+    
 red = "#f6546a"
 blue = "#4B92DB"
 
@@ -266,16 +309,16 @@ barColor = blue
 verLineColor = "black"
 #419740 is the number of games before 7.0
 matchAll, winAll, top10All, matchNumSortAll = theFunction(0, len(data))
-graph(matchAll, winAll)
-graphAll(matchAll, winAll, 30, 70, True)
-graphAll(matchAll, top10All, 30, 70, False)
-
-comb = ['212', '122', '113', '221', '311', '203', '023', '302', '131', '032']
-matchb47, winb47, top10b47, matchNumSortb47 = theFunction(len(data) - 419740, len(data))
-graphAllByCombination(matchb47, top10b47, 30, 70, comb)
-
-matchaf7, winaf7, top10af7, matchNumSortaf7 = theFunction(0, len(data) - 419740)
-graphAllByCombination(matchaf7, top10af7, 30, 70, comb)
+#graph(matchAll, winAll)
+#graphAll(matchAll, winAll, 30, 70, True)
+#graphAll(matchAll, top10All, 30, 70, False)
+#
+#comb = ['212', '122', '113', '221', '311', '203', '023', '302', '131', '032']
+#matchb47, winb47, top10b47, matchNumSortb47 = theFunction(len(data) - 419740, len(data))
+#graphAllByCombination(matchb47, top10b47, 30, 70, comb)
+#
+#matchaf7, winaf7, top10af7, matchNumSortaf7 = theFunction(0, len(data) - 419740)
+#graphAllByCombination(matchaf7, top10af7, 30, 70, comb)
 #
 #113, 122, 212
 match311, win311, total311 = compare(0, len(data),'311')
@@ -284,6 +327,8 @@ match221, win221, total221 = compare(0, len(data),'221')
 match122, win122, total122 = compare(0, len(data),'122')
 match212, win212, total212 = compare(0, len(data),'212')
 
+wrot311 = winRateOverTime(0, len(data), 1000, '311')
+graphWROverTime(0, len(data), 1000, wrot311)
 ##sort by winrate
 #graphAll(match311, win311, 0, 100, True)
 #graphAll(match113, win113, 0, 100, True)
